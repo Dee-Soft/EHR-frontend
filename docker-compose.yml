@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  ehr-frontend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api
+    depends_on:
+      - ehr-backend
+    networks:
+      - ehr-net
+
+networks:
+  ehr-net:
+    external: true
