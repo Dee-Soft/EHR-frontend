@@ -7,6 +7,8 @@ import api from '@/lib/api';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AxiosError } from 'axios';
+
 
 interface LoginFormProps {
   role: 'Admin' | 'Provider' | 'Patient' | 'Manager' | 'Employee';
@@ -25,8 +27,9 @@ export default function LoginForm({ role }: LoginFormProps) {
     try {
       const response = await api.post('/auth/login', { ...data, role });
       console.log(`${role} login success:`, response.data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      setError(axiosError.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
