@@ -1,10 +1,14 @@
 'use client';
 
+import RequireAuth from '@/components/auth/RequireAuth';
+
 export default function AdminDashboard() {
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Admin Dashboard</h2>
-      <p>Welcome, Admin! You can manage users, audit logs, and system settings.</p>
-    </div>
+    <RequireAuth allowedRoles={['Admin']}>
+      <div>
+        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+        <p>Welcome, Admin!</p>
+      </div>
+    </RequireAuth>
   );
 }

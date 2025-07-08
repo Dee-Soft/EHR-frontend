@@ -5,10 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginSchema } from '@/schemas/authSchemas';
 import api from '@/lib/api';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { AxiosError } from 'axios';
-
 
 interface LoginFormProps {
   role: 'Admin' | 'Provider' | 'Patient' | 'Manager' | 'Employee';
@@ -21,12 +22,27 @@ export default function LoginForm({ role }: LoginFormProps) {
     resolver: zodResolver(loginSchema),
   });
 
+  const { setUser } = useAuth();
+  const router = useRouter();
+
   const onSubmit = async (data: LoginSchema) => {
     setLoading(true);
     setError('');
+
     try {
-      const response = await api.post('/auth/login', { ...data, role });
-      console.log(`${role} login success:`, response.data);
+      // 🔐 Login and get JWT set in HttpOnly cookie
+      await api.post('/auth/login', { ...data, role });
+
+      // 👤 Fetch authenticated user profile
+      const meResponse = await api.get('/auth/me');
+      const user = meResponse.data;
+
+      // Save user in global context
+      setUser(user);
+
+      // 🔀 Redirect based on verified role
+      router.push(`/dashboard/${user.role.toLowerCase()}`);
+
     } catch (err: unknown) {
       const axiosError = err as AxiosError<{ message: string }>;
       setError(axiosError.response?.data?.message || 'Login failed');
