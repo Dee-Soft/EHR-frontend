@@ -1,24 +1,17 @@
-'use client';
-
 import { useState } from 'react';
 import api from '@/lib/api';
-import { useRouter } from 'next/navigation';
+import { RegisterPayload } from '@/types/auth';
 
 export function useRegister() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
-  const registerUser = async (data: any) => {
+  const registerUser = async (payload: RegisterPayload) => {
     setLoading(true);
-    setError('');
-
+    setError(null);
     try {
-      const response = await api.post('/users/register', data);
-      console.log('Registration successful:', response.data);
-      router.push('/login');
+      await api.post('/auth/register', payload);
     } catch (err: any) {
-      console.error('Registration error:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);

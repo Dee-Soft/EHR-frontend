@@ -1,19 +1,13 @@
 'use client';
 
-import { getAllowedRegistrations } from '@/utils/roleUtils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
 
-export default function EmployeeDashboard() {
-  const { user } = useAuth();
-
-  const allowedRegistrations = getAllowedRegistrations(user?.role || '');
-
+export default function RegisterUsersPage() {
   return (
-    <div className="p-6 grid gap-6">
-      {allowedRegistrations.map((role) => (
+    <div className="p-6 grid gap-6 grid-cols-1 md:grid-cols-2">
+      {['Admin', 'Manager', 'Employee', 'Provider', 'Patient'].map((role) => (
         <Card key={role}>
           <CardHeader>
             <CardTitle>{`Register ${role}`}</CardTitle>

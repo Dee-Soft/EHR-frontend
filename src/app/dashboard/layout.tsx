@@ -1,21 +1,33 @@
 'use client';
 
-import { ReactNode } from 'react';
-import DashboardHeader from '@/components/dashboard/DashboardHeader';
-import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
-interface DashboardLayoutProps {
-  children: ReactNode;
-}
-
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function ProviderDashboard() {
   return (
-    <div className="flex min-h-screen">
-      <DashboardSidebar />
-      <div className="flex-1">
-        <DashboardHeader />
-        <main className="p-6">{children}</main>
-      </div>
+    <div className="p-6 grid gap-6 grid-cols-1 md:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle>Create Patient Record</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Link href="/dashboard/provider/create-record">
+            <Button className="mt-4">Create Record</Button>
+          </Link>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>View Patient Records</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Link href="/dashboard/provider/records">
+            <Button className="mt-4">View Records</Button>
+          </Link>
+        </CardContent>
+      </Card>
     </div>
   );
 }
