@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Layout from '@/components/layout/Layout';
+import AppProviders from '@/components/providers/AppProviders';
 
 export const metadata: Metadata = {
   title: 'Electronic Health Record System',
-  description: 'Secure and HIPAA-compliant EHR system',
+  description: 'Secure and HIPAA-compliant EHR system with dual-key encryption',
 };
 
 export default function RootLayout({
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Layout>{children}</Layout>
+        <AppProviders>
+          <Layout>{children}</Layout>
+        </AppProviders>
       </body>
     </html>
   );

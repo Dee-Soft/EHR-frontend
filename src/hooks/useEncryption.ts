@@ -1,10 +1,3 @@
-import { useEncryptionContext } from '@/context/EncryptionProvider';
+import { useEncryption } from '@/context/EncryptionProvider';
 
-export const useEncryption = () => {
-  const { frontendPublicKey, decryptSensitiveData } = useEncryptionContext();
-
-  return {
-    frontendPublicKey,
-    decryptSensitiveData,
-  };
-};
+export { useEncryption };
