@@ -1,8 +1,15 @@
 {
   "name": "ehr-frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "author": "Sarfaraj Shahjahan",
+  "license": "ISC",
+  "description": "Electronic Health Record System",
+  "keywords": [
+    "ehr",
+    "healthcare",
+    "system"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build --no-lint",
