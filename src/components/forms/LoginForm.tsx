@@ -10,7 +10,6 @@ import { useAuth } from '@/context/AuthContext';
 import { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { email} from 'zod/v4-mini';
 
 interface LoginFormProps {
   role: 'Admin' | 'Provider' | 'Patient' | 'Manager' | 'Employee';

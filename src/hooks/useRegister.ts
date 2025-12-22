@@ -11,8 +11,8 @@ export function useRegister() {
     setError(null);
     try {
       await api.post('/auth/register', payload);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+    } catch (err: unknown) {
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }

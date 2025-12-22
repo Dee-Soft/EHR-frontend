@@ -15,8 +15,8 @@ export default function AuditLogsPage() {
       try {
         const res = await api.get('/admin/audit-logs');
         setLogs(res.data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to fetch audit logs');
+      } catch (err: unknown) {
+        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to fetch audit logs');
       } finally {
         setLoading(false);
       }
