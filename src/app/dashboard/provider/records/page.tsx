@@ -53,14 +53,6 @@ export default function ProviderRecordsPage() {
   const [decrypting, setDecrypting] = useState<string | null>(null);
   const [decryptedData, setDecryptedData] = useState<Record<string, unknown>>({});
 
-  useEffect(() => {
-    fetchPatientRecords();
-  }, []);
-
-  useEffect(() => {
-    filterRecords();
-  }, [searchTerm, records, filterRecords]);
-
   const fetchPatientRecords = async () => {
     try {
       setLoading(true);
@@ -93,6 +85,14 @@ export default function ProviderRecordsPage() {
     
     setFilteredRecords(filtered);
   }, [searchTerm, records]);
+
+  useEffect(() => {
+    fetchPatientRecords();
+  }, []);
+
+  useEffect(() => {
+    filterRecords();
+  }, [searchTerm, records, filterRecords]);
 
   const handleDecryptRecord = async (recordId: string, encryptedAesKey: string) => {
     try {

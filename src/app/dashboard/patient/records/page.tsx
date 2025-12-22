@@ -48,6 +48,7 @@ export default function PatientRecordsPage() {
   const [error, setError] = useState<string | null>(null);
   const [decrypting, setDecrypting] = useState<string | null>(null);
   const [decryptedData, setDecryptedData] = useState<Record<string, unknown>>({});
+
   const [selectedRecord, setSelectedRecord] = useState<string | null>(null);
 
   useEffect(() => {
@@ -145,9 +146,9 @@ export default function PatientRecordsPage() {
       visitDate: formatDate(record.visitDate),
       createdBy: record.createdBy.name,
       createdByRole: record.createdBy.role,
-      diagnosis: decrypted.diagnosis,
-      notes: decrypted.notes,
-      medications: decrypted.medications,
+      diagnosis: typeof decrypted === 'object' && decrypted !== null && 'diagnosis' in decrypted ? (decrypted as Record<string, unknown>).diagnosis : '',
+      notes: typeof decrypted === 'object' && decrypted !== null && 'notes' in decrypted ? (decrypted as Record<string, unknown>).notes : '',
+      medications: typeof decrypted === 'object' && decrypted !== null && 'medications' in decrypted ? (decrypted as Record<string, unknown>).medications : '',
       recordDate: formatDate(record.createdAt),
       encryption: {
         algorithm: record.encryptionMetadata?.algorithm,
