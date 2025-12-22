@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+// Test comment for pre-commit hook testing
 
 export default function HomePage() {
   return (
