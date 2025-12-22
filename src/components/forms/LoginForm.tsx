@@ -10,6 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { email} from 'zod/v4-mini';
 
 interface LoginFormProps {
   role: 'Admin' | 'Provider' | 'Patient' | 'Manager' | 'Employee';
@@ -30,17 +31,17 @@ export default function LoginForm({ role }: LoginFormProps) {
     setError('');
 
     try {
-      // 🔐 Login and get JWT set in HttpOnly cookie
-      await api.post('/auth/login', { ...data, role });
+      // Login and get JWT set in HttpOnly cookie
+      await api.post('/auth/login', { email: data.email, password: data.password });
 
-      // 👤 Fetch authenticated user profile
+      // Fetch authenticated user profile
       const meResponse = await api.get('/auth/me');
       const user = meResponse.data;
 
       // Save user in global context
       setUser(user);
 
-      // 🔀 Redirect based on verified role
+      // Redirect based on verified role
       router.push(`/dashboard/${user.role.toLowerCase()}`);
 
     } catch (err: unknown) {
