@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import api from '@/lib/api';
 import { 
   Home, 
   Users, 
@@ -22,8 +23,8 @@ export default function DashboardSidebar() {
 
   const handleLogout = async () => {
     try {
-      // Call logout API
-      await fetch('/api/auth/logout', { method: 'POST' });
+      // Call logout API - backend expects /auth/logout
+      await api.post('/auth/logout');
       setUser(null);
       window.location.href = '/';
     } catch (error) {

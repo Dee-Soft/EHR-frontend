@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import { decryptPatientRecord } from '@/lib/crypto/encryptionService';
+import { getErrorMessage } from '@/types/error';
 
 interface PatientRecord {
   _id: string;
@@ -59,11 +60,11 @@ export default function ProviderRecordsPage() {
       setError(null);
       
       // Fetch patient records for the provider
-      const response = await api.get('/patient-records/assigned');
+      const response = await api.get('/patient-records/provider/assigned');
       setRecords(response.data || []);
     } catch (err: unknown) {
       console.error('Failed to fetch patient records:', err);
-      setError('Unable to load patient records. Please try again later.');
+      setError(getErrorMessage(err) || 'Unable to load patient records. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -131,23 +132,13 @@ export default function ProviderRecordsPage() {
     });
   };
 
-  const getEncryptionBadge = (algorithm: string) => {
-    switch (algorithm) {
-      case 'aes256-gcm96':
-        return (
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            <Shield className="h-3 w-3 mr-1" />
-            AES-256-GCM
-          </Badge>
-        );
-      default:
-        return (
-          <Badge variant="outline">
-            <Shield className="h-3 w-3 mr-1" />
-            {algorithm}
-          </Badge>
-        );
-    }
+  const getEncryptionBadge = (_algorithm: string) => {
+    return (
+      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+        <Shield className="h-3 w-3 mr-1" />
+        Secured
+      </Badge>
+    );
   };
 
   return (
@@ -347,11 +338,11 @@ export default function ProviderRecordsPage() {
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-800">About Record Encryption</h4>
+              <h4 className="font-medium text-blue-800">About Record Security</h4>
               <p className="text-sm text-blue-700 mt-1">
-                Patient records are encrypted using OpenBao&apos;s dual-key architecture. 
-                When you click &quot;Decrypt Record&quot;, the data is securely decrypted on your device 
-                using keys managed by OpenBao. The backend never has access to plaintext patient data.
+                Patient records are secured with industry-standard encryption. 
+                When you click &quot;Decrypt Record&quot;, the data is securely decrypted on your device. 
+                The backend never has access to plaintext patient data.
               </p>
             </div>
           </div>

@@ -12,6 +12,10 @@ interface RegisterFormProps {
   role: 'Admin' | 'Provider' | 'Patient' | 'Manager' | 'Employee';
 }
 
+/**
+ * Registration form component for creating new user accounts.
+ * Handles form validation and submission for different user roles.
+ */
 export default function RegisterForm({ role }: RegisterFormProps) {
   const { registerUser, loading, error } = useRegister();
 
@@ -23,6 +27,10 @@ export default function RegisterForm({ role }: RegisterFormProps) {
     resolver: zodResolver(registerSchema),
   });
 
+  /**
+   * Handle form submission for user registration.
+   * @param data - Form data containing user registration information
+   */
   const onSubmit = (data: RegisterSchema) => {
     registerUser({ ...data, role });
   };

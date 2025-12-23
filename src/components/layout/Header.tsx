@@ -2,6 +2,10 @@
 
 import Link from 'next/link';
 
+/**
+ * Header component for the application.
+ * Displays the main navigation and application title.
+ */
 export default function Header() {
   return (
     <header className="bg-blue-600 text-white shadow-md">

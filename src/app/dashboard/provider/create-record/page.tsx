@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, ArrowLeft, Users, AlertCircle } from 'lucide-react';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/types/error';
 import { useAuth } from '@/context/AuthContext';
 
 interface AssignedPatient {
@@ -37,7 +38,7 @@ export default function CreatePatientRecordPage() {
       setAssignedPatients(response.data || []);
     } catch (err: unknown) {
       console.error('Failed to fetch assigned patients:', err);
-      setError('Unable to load assigned patients. You can still create records by entering patient ID manually.');
+      setError(getErrorMessage(err) || 'Unable to load assigned patients. You can still create records by entering patient ID manually.');
     } finally {
       setLoading(false);
     }

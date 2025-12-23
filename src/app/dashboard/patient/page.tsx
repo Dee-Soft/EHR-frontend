@@ -33,7 +33,7 @@ export default function PatientDashboard() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                View your encrypted health records. All data is protected with end-to-end encryption and can only be accessed by you and authorized providers.
+                View your health records securely. All data is protected and can only be accessed by you and authorized providers.
               </p>
               <Link href="/dashboard/patient/records">
                 <Button className="w-full">
@@ -55,10 +55,10 @@ export default function PatientDashboard() {
               <p className="text-muted-foreground mb-4">
                 View and manage your upcoming appointments. Schedule new appointments with healthcare providers.
               </p>
-              <Button variant="outline" className="w-full" disabled>
-                <Calendar className="h-4 w-4 mr-2" />
-                View Appointments
-              </Button>
+              <div className="text-sm text-muted-foreground p-3 bg-gray-50 rounded border">
+                <Calendar className="h-4 w-4 inline mr-2" />
+                Contact your provider to schedule appointments
+              </div>
             </CardContent>
           </Card>
 
@@ -73,10 +73,10 @@ export default function PatientDashboard() {
               <p className="text-muted-foreground mb-4">
                 View important notifications about your health records, appointments, and medication reminders.
               </p>
-              <Button variant="outline" className="w-full" disabled>
-                <Bell className="h-4 w-4 mr-2" />
-                View Notifications
-              </Button>
+              <div className="text-sm text-muted-foreground p-3 bg-gray-50 rounded border">
+                <Bell className="h-4 w-4 inline mr-2" />
+                Notifications will appear here when available
+              </div>
             </CardContent>
           </Card>
 
@@ -91,10 +91,10 @@ export default function PatientDashboard() {
               <p className="text-muted-foreground mb-4">
                 Manage your privacy settings and control who can access your health records.
               </p>
-              <Button variant="outline" className="w-full" disabled>
-                <Shield className="h-4 w-4 mr-2" />
-                Manage Privacy
-              </Button>
+              <div className="text-sm text-muted-foreground p-3 bg-gray-50 rounded border">
+                <Shield className="h-4 w-4 inline mr-2" />
+                Your data is protected by default
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -105,30 +105,9 @@ export default function PatientDashboard() {
             <div>
               <h4 className="font-medium text-green-800">Your Data Security</h4>
               <p className="text-sm text-green-700 mt-1">
-                Your health records are protected with military-grade encryption using OpenBao&apos;s dual-key architecture. 
-                This means your sensitive health data is encrypted before it leaves your device and can only be 
-                decrypted by authorized healthcare providers.
+                Your health records are protected with industry-standard security measures. 
+                All sensitive health data is secured and can only be accessed by authorized healthcare providers.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <div className="bg-white p-3 rounded border border-green-100">
-                  <h5 className="font-medium text-green-800 text-sm">End-to-End Encryption</h5>
-                  <p className="text-xs text-green-700 mt-1">
-                    Data encrypted on your device, decrypted only by authorized parties
-                  </p>
-                </div>
-                <div className="bg-white p-3 rounded border border-green-100">
-                  <h5 className="font-medium text-green-800 text-sm">Dual-Key Architecture</h5>
-                  <p className="text-xs text-green-700 mt-1">
-                    Separate keys for frontend and backend ensure maximum security
-                  </p>
-                </div>
-                <div className="bg-white p-3 rounded border border-green-100">
-                  <h5 className="font-medium text-green-800 text-sm">HIPAA Compliant</h5>
-                  <p className="text-xs text-green-700 mt-1">
-                    Meets healthcare data protection standards
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

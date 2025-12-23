@@ -7,7 +7,7 @@ import api from '@/lib/api';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { AxiosError } from 'axios';
+import { getErrorMessage } from '@/types/error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -15,6 +15,10 @@ interface LoginFormProps {
   role: 'Admin' | 'Provider' | 'Patient' | 'Manager' | 'Employee';
 }
 
+/**
+ * Login form component for authenticating users.
+ * Handles form submission, API calls, and redirects based on user role.
+ */
 export default function LoginForm({ role }: LoginFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,6 +29,10 @@ export default function LoginForm({ role }: LoginFormProps) {
   const { setUser } = useAuth();
   const router = useRouter();
 
+  /**
+   * Handle form submission for user login.
+   * @param data - Form data containing email and password
+   */
   const onSubmit = async (data: LoginSchema) => {
     setLoading(true);
     setError('');
@@ -35,7 +43,7 @@ export default function LoginForm({ role }: LoginFormProps) {
 
       // Fetch authenticated user profile
       const meResponse = await api.get('/auth/me');
-      const user = meResponse.data;
+      const user = meResponse.data.user || meResponse.data;
 
       // Save user in global context
       setUser(user);
@@ -44,8 +52,7 @@ export default function LoginForm({ role }: LoginFormProps) {
       router.push(`/dashboard/${user.role.toLowerCase()}`);
 
     } catch (err: unknown) {
-      const axiosError = err as AxiosError<{ message: string }>;
-      setError(axiosError.response?.data?.message || 'Login failed');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

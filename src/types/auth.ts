@@ -1,5 +1,10 @@
+/**
+ * Payload interface for user registration requests.
+ * Contains all required fields for creating a new user account.
+ */
 export interface RegisterPayload {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role: string;

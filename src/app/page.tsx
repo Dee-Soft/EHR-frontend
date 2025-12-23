@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// Test comment for pre-commit hook testing - updated
 
+/**
+ * Home page component displaying role-based login options.
+ * Provides entry points for different user roles in the EHR system.
+ */
 export default function HomePage() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">

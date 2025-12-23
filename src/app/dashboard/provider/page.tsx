@@ -16,7 +16,7 @@ export default function ProviderDashboard() {
             Provider Dashboard
           </h1>
           <p className="text-muted-foreground mt-2">
-            Manage patient records with end-to-end encryption. All sensitive data is protected using OpenBao&apos;s dual-key architecture.
+            Manage patient records securely. All sensitive data is protected with industry-standard security measures.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ export default function ProviderDashboard() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                View and manage encrypted patient records. Decrypt records securely using OpenBao keys.
+                View and manage patient records securely. Decrypt records when needed for patient care.
               </p>
               <Link href="/dashboard/provider/records">
                 <Button variant="outline" className="w-full">
@@ -72,10 +72,10 @@ export default function ProviderDashboard() {
               <p className="text-muted-foreground mb-4">
                 View patients assigned to you. Manage patient assignments and access their health records.
               </p>
-              <Button variant="outline" className="w-full" disabled>
-                <Users className="h-4 w-4 mr-2" />
-                View Assigned Patients
-              </Button>
+              <div className="text-sm text-muted-foreground p-3 bg-gray-50 rounded border">
+                <Users className="h-4 w-4 inline mr-2" />
+                Available in patient records section
+              </div>
             </CardContent>
           </Card>
 
@@ -88,40 +88,14 @@ export default function ProviderDashboard() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                View statistics and generate reports for your patient records. All data remains encrypted during processing.
+                View statistics and generate reports for your patient records.
               </p>
-              <Button variant="outline" className="w-full" disabled>
-                <BarChart className="h-4 w-4 mr-2" />
-                View Statistics
-              </Button>
+              <div className="text-sm text-muted-foreground p-3 bg-gray-50 rounded border">
+                <BarChart className="h-4 w-4 inline mr-2" />
+                Coming soon
+              </div>
             </CardContent>
           </Card>
-        </div>
-
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="flex items-start gap-3">
-            <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
-            <div>
-              <h4 className="font-medium text-blue-800">Encryption Status</h4>
-              <p className="text-sm text-blue-700 mt-1">
-                Your dashboard is secured with OpenBao&apos;s dual-key encryption. All patient data is encrypted before leaving your browser and can only be decrypted by authorized parties.
-              </p>
-              <div className="flex items-center gap-4 mt-3">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                  <span className="text-sm text-blue-700">OpenBao Connected</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                  <span className="text-sm text-blue-700">Encryption Active</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                  <span className="text-sm text-blue-700">HIPAA Compliant</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </RequireAuth>

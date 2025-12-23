@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import api from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
+import { getErrorMessage } from '@/types/error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -41,7 +42,6 @@ export default function EncryptedPatientRecordForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [encryptionStatus, setEncryptionStatus] = useState<'idle' | 'encrypting' | 'encrypted' | 'error'>('idle');
 
   const { user } = useAuth();
 
@@ -60,7 +60,6 @@ export default function EncryptedPatientRecordForm({
   const onSubmit = async (data: PatientRecordFormData) => {
     setLoading(true);
     setError(null);
-    setEncryptionStatus('encrypting');
 
     try {
       // Prepare the data for encryption
@@ -76,7 +75,6 @@ export default function EncryptedPatientRecordForm({
       // The API client will automatically add encryption headers
       const _response = await api.post('/patient-records', recordData);
 
-      setEncryptionStatus('encrypted');
       setSuccess(true);
       
       // Reset form
@@ -89,17 +87,7 @@ export default function EncryptedPatientRecordForm({
     } catch (err: unknown) {
       console.error('Failed to create patient record:', err);
       
-      setEncryptionStatus('error');
-      
-      if (err.encryptionError) {
-        setError('Encryption failed. Please check OpenBao configuration.');
-      } else if (err.openBaoError) {
-        setError('OpenBao encryption service is unavailable. Please try again later.');
-      } else if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Failed to create patient record. Please try again.');
-      }
+      setError(getErrorMessage(err) || 'Failed to create patient record. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -113,7 +101,7 @@ export default function EncryptedPatientRecordForm({
           Create Encrypted Patient Record
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          All sensitive data is encrypted using OpenBao before being sent to the server.
+          All sensitive data is encrypted before being sent to the server.
         </p>
       </CardHeader>
       
@@ -246,22 +234,10 @@ export default function EncryptedPatientRecordForm({
 
           <div className="flex items-center justify-between pt-4 border-t">
             <div className="flex items-center gap-2">
-              {encryptionStatus === 'encrypting' && (
-                <div className="flex items-center gap-2 text-sm text-blue-600">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Encrypting data...
-                </div>
-              )}
-              {encryptionStatus === 'encrypted' && (
+              {success && (
                 <div className="flex items-center gap-2 text-sm text-green-600">
                   <Shield className="h-4 w-4" />
-                  Data encrypted and sent securely
-                </div>
-              )}
-              {encryptionStatus === 'error' && (
-                <div className="flex items-center gap-2 text-sm text-red-600">
-                  <AlertCircle className="h-4 w-4" />
-                  Encryption failed
+                  Record created successfully
                 </div>
               )}
             </div>
@@ -299,8 +275,7 @@ export default function EncryptedPatientRecordForm({
             <p className="flex items-center gap-1">
               <Shield className="h-3 w-3" />
               <strong>Security Note:</strong> Sensitive fields (diagnosis, notes, medications) are encrypted
-              using OpenBao&apos;s dual-key architecture before being sent to the server.
-              The backend never sees plaintext patient data.
+              before being sent to the server. The backend never sees plaintext patient data.
             </p>
           </div>
         </form>

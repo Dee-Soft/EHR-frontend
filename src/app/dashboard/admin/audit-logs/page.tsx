@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { AuditLog } from '@/types/auditLog';
+import { getErrorMessage } from '@/types/error';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AuditLogsPage() {
@@ -16,7 +17,7 @@ export default function AuditLogsPage() {
         const res = await api.get('/admin/audit-logs');
         setLogs(res.data);
       } catch (err: unknown) {
-        setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to fetch audit logs');
+        setError(getErrorMessage(err));
       } finally {
         setLoading(false);
       }

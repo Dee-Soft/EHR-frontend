@@ -1,5 +1,9 @@
 import * as z from 'zod';
 
+/**
+ * Zod schema for user login validation.
+ * Validates email format and password strength requirements.
+ */
 export const loginSchema = z.object({
   email: z.string().email('Invalid email'),
   password: z.string()
@@ -12,6 +16,10 @@ export const loginSchema = z.object({
 
 export type LoginSchema = z.infer<typeof loginSchema>;
 
+/**
+ * Zod schema for user registration validation.
+ * Validates required fields and password strength requirements.
+ */
 export const registerSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),

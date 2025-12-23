@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import { decryptPatientRecord } from '@/lib/crypto/encryptionService';
+import { getErrorMessage } from '@/types/error';
 import { useAuth } from '@/context/AuthContext';
 
 interface PatientRecord {
@@ -65,7 +66,7 @@ export default function PatientRecordsPage() {
       setRecords(response.data || []);
     } catch (err: unknown) {
       console.error('Failed to fetch patient records:', err);
-      setError('Unable to load your health records. Please try again later.');
+      setError(getErrorMessage(err) || 'Unable to load your health records. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -343,9 +344,9 @@ export default function PatientRecordsPage() {
             <div>
               <h4 className="font-medium text-green-800">Your Data Privacy</h4>
               <p className="text-sm text-green-700 mt-1">
-                Your health records are encrypted using military-grade encryption. 
+                Your health records are secured using industry-standard encryption. 
                 Only you and authorized healthcare providers can decrypt and view your records. 
-                The encryption keys are managed by OpenBao, ensuring your data remains private and secure.
+                Your data remains private and secure.
               </p>
               <ul className="text-sm text-green-700 mt-2 space-y-1">
                 <li className="flex items-start gap-2">

@@ -2,7 +2,10 @@ import axios from 'axios';
 import { getEncryptionHeaders } from './crypto/encryptionService';
 import { isEncryptionEnabled } from './openbao/utils';
 
-// Create axios instance with default configuration
+/**
+ * Axios instance configured for the EHR backend API.
+ * Includes request/response interceptors for encryption handling.
+ */
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api',
   withCredentials: true,
@@ -11,7 +14,10 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to add encryption headers
+/**
+ * Request interceptor to automatically add encryption headers for sensitive data.
+ * Skips encryption for key exchange endpoints to avoid circular dependencies.
+ */
 api.interceptors.request.use(
   async (config) => {
     // Skip encryption for key exchange endpoints to avoid circular dependency
@@ -40,7 +46,7 @@ api.interceptors.request.use(
           };
           
           // Mark that this request has encrypted data
-          config.headers['x-encryption-version'] = 'dual-key-v1';
+          config.headers['x-encryption-enabled'] = 'true';
         }
       } catch (error) {
         console.error('Failed to add encryption headers:', error);
@@ -55,7 +61,10 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle encrypted responses
+/**
+ * Response interceptor to handle encrypted responses from the backend.
+ * Marks encrypted responses for later decryption by service functions.
+ */
 api.interceptors.response.use(
   async (response) => {
     // Check if response contains encrypted data
@@ -63,8 +72,7 @@ api.interceptors.response.use(
     
     if (hasEncryptedData && response.data) {
       try {
-        // In the dual-key architecture, the backend returns encrypted data
-        // with the encrypted AES key. We need to decrypt it.
+        // The backend returns encrypted data that needs to be decrypted.
         // This would be handled by specific service functions, not here.
         // We'll just pass through the data for now.
         response.data._encrypted = true;
@@ -95,7 +103,10 @@ api.interceptors.response.use(
   }
 );
 
-// Export a function to test API connection
+/**
+ * Test the connection to the backend API.
+ * @returns Promise resolving to true if connection is successful, false otherwise
+ */
 export async function testAPIConnection(): Promise<boolean> {
   try {
     await api.get('/health');
@@ -103,41 +114,6 @@ export async function testAPIConnection(): Promise<boolean> {
   } catch (error) {
     console.error('API connection test failed:', error);
     return false;
-  }
-}
-
-// Export a function to get encryption status
-export async function getAPIEncryptionStatus(): Promise<{
-  apiConnected: boolean;
-  encryptionEnabled: boolean;
-  openBaoHealthy: boolean;
-}> {
-  try {
-    const [apiConnected, encryptionEnabled, openBaoHealthy] = await Promise.all([
-      testAPIConnection(),
-      isEncryptionEnabled(),
-      (async () => {
-        try {
-          const { healthy } = await import('./openbao/utils').then(m => m.checkOpenBaoHealth());
-          return healthy;
-        } catch {
-          return false;
-        }
-      })(),
-    ]);
-
-    return {
-      apiConnected,
-      encryptionEnabled,
-      openBaoHealthy,
-    };
-  } catch (error) {
-    console.error('Failed to get encryption status:', error);
-    return {
-      apiConnected: false,
-      encryptionEnabled: false,
-      openBaoHealthy: false,
-    };
   }
 }
 
