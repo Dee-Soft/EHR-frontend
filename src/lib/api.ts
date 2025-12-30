@@ -4,14 +4,15 @@ import { isEncryptionEnabled } from './openbao/utils';
 
 /**
  * Axios instance configured for the EHR backend API.
- * Includes request/response interceptors for encryption handling.
+ * Includes request/response interceptors for encryption handling and authentication.
  */
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api',
-  withCredentials: true,
+  withCredentials: true, // Important for JWT cookies
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000, // 10 second timeout
 });
 
 /**
@@ -62,8 +63,8 @@ api.interceptors.request.use(
 );
 
 /**
- * Response interceptor to handle encrypted responses from the backend.
- * Marks encrypted responses for later decryption by service functions.
+ * Response interceptor to handle encrypted responses and authentication errors.
+ * Standardizes response structure and handles common error scenarios.
  */
 api.interceptors.response.use(
   async (response) => {
@@ -81,13 +82,40 @@ api.interceptors.response.use(
       }
     }
 
+    // Standardize response structure - backend returns { success, message, data }
+    if (response.data && typeof response.data === 'object') {
+      // If backend returns standardized structure, use it
+      if ('success' in response.data && 'data' in response.data) {
+        response.data = response.data.data || response.data;
+      }
+    }
+
     return response;
   },
   (error) => {
-    // Handle encryption-related errors
+    // Handle authentication and authorization errors
     if (error.response) {
       const { status, data } = error.response;
       
+      // Handle 401 Unauthorized - redirect to login
+      if (status === 401) {
+        console.error('Authentication required. Redirecting to login.');
+        // Clear any stored user data
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user');
+          // Redirect to login page
+          window.location.href = '/auth/login';
+        }
+        error.authError = true;
+      }
+      
+      // Handle 403 Forbidden - insufficient permissions
+      if (status === 403) {
+        console.error('Insufficient permissions:', data?.message || 'Access denied');
+        error.permissionError = true;
+      }
+      
+      // Handle encryption-related errors
       if (status === 400 && data?.message?.includes('encryption')) {
         console.error('Encryption error:', data.message);
         error.encryptionError = true;
@@ -97,6 +125,23 @@ api.interceptors.response.use(
         console.error('OpenBao unavailable:', data.message);
         error.openBaoError = true;
       }
+      
+      // Extract error message from backend response
+      if (data && typeof data === 'object') {
+        if (data.message) {
+          error.message = data.message;
+        } else if (data.error) {
+          error.message = data.error;
+        }
+      }
+    } else if (error.request) {
+      // Network error - no response received
+      console.error('Network error:', error.message);
+      error.message = 'Unable to connect to the server. Please check your network connection.';
+      error.networkError = true;
+    } else {
+      // Request setup error
+      console.error('Request error:', error.message);
     }
     
     return Promise.reject(error);

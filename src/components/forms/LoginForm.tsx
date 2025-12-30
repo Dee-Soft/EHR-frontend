@@ -26,7 +26,7 @@ export default function LoginForm({ role }: LoginFormProps) {
     resolver: zodResolver(loginSchema),
   });
 
-  const { setUser } = useAuth();
+  const { refreshUser } = useAuth();
   const router = useRouter();
 
   /**
@@ -39,20 +39,35 @@ export default function LoginForm({ role }: LoginFormProps) {
 
     try {
       // Login and get JWT set in HttpOnly cookie
-      await api.post('/auth/login', { email: data.email, password: data.password });
+      // Backend expects: { email, password }
+      const response = await api.post('/auth/login', { 
+        email: data.email, 
+        password: data.password 
+      });
 
-      // Fetch authenticated user profile
-      const meResponse = await api.get('/auth/me');
-      const user = meResponse.data.user || meResponse.data;
-
-      // Save user in global context
-      setUser(user);
-
-      // Redirect based on verified role
-      router.push(`/dashboard/${user.role.toLowerCase()}`);
+      // Backend returns: { success, message, data: { user } }
+      if (response.data?.success) {
+        // Refresh user data from backend
+        await refreshUser();
+        
+        // Get updated user from context (will be set by refreshUser)
+        // Redirect based on user role - we'll handle this in useEffect
+        // For now, redirect to generic dashboard, the dashboard will redirect based on role
+        router.push('/dashboard');
+      } else {
+        throw new Error(response.data?.message || 'Login failed');
+      }
 
     } catch (err: unknown) {
-      setError(getErrorMessage(err));
+      const errorMessage = getErrorMessage(err);
+      // Provide more user-friendly error messages
+      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+        setError('Invalid email or password. Please try again.');
+      } else if (errorMessage.includes('Network Error') || errorMessage.includes('timeout')) {
+        setError('Unable to connect to the server. Please check your network connection.');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }

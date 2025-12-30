@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, ArrowLeft, Users, AlertCircle } from 'lucide-react';
-import api from '@/lib/api';
+import { providerService } from '@/lib/services/providerService';
 import { getErrorMessage } from '@/types/error';
 import { useAuth } from '@/context/AuthContext';
 
@@ -33,9 +33,13 @@ export default function CreatePatientRecordPage() {
     try {
       setLoading(true);
       
-      // Fetch assigned patients for the provider
-      const response = await api.get('/providers/assigned-patients');
-      setAssignedPatients(response.data || []);
+      // Fetch assigned patients for the provider using provider service
+      const patients = await providerService.getAssignedPatients();
+      setAssignedPatients(patients.map(p => ({
+        id: p.id,
+        name: p.name,
+        email: p.email
+      })));
     } catch (err: unknown) {
       console.error('Failed to fetch assigned patients:', err);
       setError(getErrorMessage(err) || 'Unable to load assigned patients. You can still create records by entering patient ID manually.');

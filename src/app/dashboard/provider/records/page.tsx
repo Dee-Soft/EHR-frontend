@@ -20,7 +20,7 @@ import {
   Plus,
   Eye
 } from 'lucide-react';
-import api from '@/lib/api';
+import { providerService } from '@/lib/services/providerService';
 import { decryptPatientRecord } from '@/lib/crypto/encryptionService';
 import { getErrorMessage } from '@/types/error';
 
@@ -59,9 +59,9 @@ export default function ProviderRecordsPage() {
       setLoading(true);
       setError(null);
       
-      // Fetch patient records for the provider
-      const response = await api.get('/patient-records/provider/assigned');
-      setRecords(response.data || []);
+      // Fetch patient records for the provider using provider service
+      const recordsData = await providerService.getPatientRecords();
+      setRecords(recordsData);
     } catch (err: unknown) {
       console.error('Failed to fetch patient records:', err);
       setError(getErrorMessage(err) || 'Unable to load patient records. Please try again later.');

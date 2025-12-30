@@ -17,7 +17,7 @@ import {
   Loader2,
   Download
 } from 'lucide-react';
-import api from '@/lib/api';
+import { patientService } from '@/lib/services/patientService';
 import { decryptPatientRecord } from '@/lib/crypto/encryptionService';
 import { getErrorMessage } from '@/types/error';
 import { useAuth } from '@/context/AuthContext';
@@ -61,9 +61,9 @@ export default function PatientRecordsPage() {
       setLoading(true);
       setError(null);
       
-      // Fetch patient's own records
-      const response = await api.get('/patient-records/my-records');
-      setRecords(response.data || []);
+      // Fetch patient's own records using patient service
+      const records = await patientService.getMyRecords();
+      setRecords(records);
     } catch (err: unknown) {
       console.error('Failed to fetch patient records:', err);
       setError(getErrorMessage(err) || 'Unable to load your health records. Please try again later.');

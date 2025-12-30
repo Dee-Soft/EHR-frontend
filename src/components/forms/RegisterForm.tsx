@@ -25,6 +25,9 @@ export default function RegisterForm({ role }: RegisterFormProps) {
     formState: { errors },
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      role: role, // Set default role from prop
+    },
   });
 
   /**
@@ -32,7 +35,7 @@ export default function RegisterForm({ role }: RegisterFormProps) {
    * @param data - Form data containing user registration information
    */
   const onSubmit = (data: RegisterSchema) => {
-    registerUser({ ...data, role });
+    registerUser(data);
   };
 
   return (
@@ -43,14 +46,9 @@ export default function RegisterForm({ role }: RegisterFormProps) {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label>First Name</label>
-            <Input {...register('firstName')} placeholder="John" />
-            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
-          </div>
-          <div>
-            <label>Last Name</label>
-            <Input {...register('lastName')} placeholder="Doe" />
-            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
+            <label>Full Name</label>
+            <Input {...register('name')} placeholder="John Doe" />
+            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
           </div>
           <div>
             <label>Email</label>
@@ -62,6 +60,17 @@ export default function RegisterForm({ role }: RegisterFormProps) {
             <Input {...register('password')} type="password" placeholder="********" />
             {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
           </div>
+          <div>
+            <label>Phone (Optional)</label>
+            <Input {...register('phone')} placeholder="123-456-7890" />
+            {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+          </div>
+          <div>
+            <label>Address (Optional)</label>
+            <Input {...register('address')} placeholder="123 Main St, City, State" />
+            {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
+          </div>
+          <input type="hidden" {...register('role')} />
           {error && <p className="text-red-500">{error}</p>}
           <Button type="submit" disabled={loading}>
             {loading ? 'Registering...' : `Register ${role}`}

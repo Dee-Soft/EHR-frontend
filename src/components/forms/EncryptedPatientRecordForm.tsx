@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import api from '@/lib/api';
+import { providerService } from '@/lib/services/providerService';
 import { useAuth } from '@/context/AuthContext';
 import { getErrorMessage } from '@/types/error';
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,7 @@ export default function EncryptedPatientRecordForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
 
   const {
     register,
@@ -64,16 +64,18 @@ export default function EncryptedPatientRecordForm({
     try {
       // Prepare the data for encryption
       const recordData = {
-        patient: data.patientId,
+        patientId: data.patientId,
+        recordType: 'Consultation', // Default record type
         diagnosis: data.diagnosis,
         notes: data.notes || '',
-        medications: data.medications || '',
+        medications: data.medications ? data.medications.split('\n').filter(m => m.trim()) : [],
         visitDate: data.visitDate,
-        createdBy: user?.id,
+        vitalSigns: {}, // Empty vital signs for now
       };
 
+      // Use provider service to create patient record
       // The API client will automatically add encryption headers
-      const _response = await api.post('/patient-records', recordData);
+      await providerService.createPatientRecord(recordData);
 
       setSuccess(true);
       
@@ -87,7 +89,14 @@ export default function EncryptedPatientRecordForm({
     } catch (err: unknown) {
       console.error('Failed to create patient record:', err);
       
-      setError(getErrorMessage(err) || 'Failed to create patient record. Please try again.');
+      const errorMessage = getErrorMessage(err);
+      if (errorMessage.includes('403') || errorMessage.includes('Forbidden')) {
+        setError('You are not assigned to this patient or do not have permission to create records.');
+      } else if (errorMessage.includes('404') || errorMessage.includes('Not Found')) {
+        setError('Patient not found. Please check the patient ID.');
+      } else {
+        setError(errorMessage || 'Failed to create patient record. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

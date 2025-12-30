@@ -62,9 +62,15 @@ export async function decryptPatientRecord(
     const encryptedFields: Record<string, string> = {};
     const sensitiveFields = ['diagnosis', 'notes', 'medications'];
     
-    for (const field of sensitiveFields) {
-      if (encryptedRecord[field]) {
-        encryptedFields[field] = encryptedRecord[field];
+    // Type guard to check if encryptedRecord is an object
+    if (typeof encryptedRecord === 'object' && encryptedRecord !== null) {
+      const record = encryptedRecord as Record<string, unknown>;
+      
+      for (const field of sensitiveFields) {
+        const value = record[field];
+        if (typeof value === 'string' && value) {
+          encryptedFields[field] = value;
+        }
       }
     }
 
